@@ -1,26 +1,23 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import Header from "./components/Header";
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import Wallet from './pages/Wallet'
+import Rewards from './pages/Rewards'
+import Profile from './pages/Profile'
+import NavBar from './components/NavBar'
 
-function App() {
+const App: React.FC = () => {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
-        <Header />
-        <main className="p-6">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Routes>
-        </main>
-      </div>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/wallet" element={<Wallet />} />
+        <Route path="/rewards" element={<Rewards />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App

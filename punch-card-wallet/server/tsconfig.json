@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "rootDir": "./src",        // <-- points to your src folder
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "skipDefaultLibCheck": true
+  },
+  "include": ["src/**/*", "src/routes/**/*"],      // <-- ensures TS includes all files under src
+  "exclude": ["node_modules"]
+}

@@ -2,6 +2,8 @@ import { Router, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Business from "../models/Business.js";
+import { verifyToken } from "../middleware/auth";
+
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
@@ -60,5 +62,36 @@ router.post("/login", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// UPDATE business profile
+router.put("/profile", verifyToken, async (req: Request, res: Response) => {
+  try {
+    const { name, description, location } = req.body;
+    const updated = await Business.findByIdAndUpdate(
+      req.body.businessId,
+      { name, description, location },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!updated) return res.status(404).json({ message: "Business not found" });
+    res.json(updated);
+  } catch (err) {
+    console.error("Profile update error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Get all businesses
+router.get("/", async (_req: Request, res: Response) => {
+  try {
+    const businesses = await Business.find().select("-password"); // exclude passwords
+    res.json(businesses);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 
 export default router;

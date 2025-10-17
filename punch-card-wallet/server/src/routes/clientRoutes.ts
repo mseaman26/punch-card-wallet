@@ -1,7 +1,8 @@
 import { Router, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import Client from "../models/Client.js";
+import Client, { IClient } from "../models/Client.js";
+import mongoose from "mongoose";
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
@@ -57,6 +58,31 @@ router.post("/login", async (req: Request, res: Response) => {
     res.json({ token, client: { id: client._id, name: client.name, email: client.email } });
   } catch (err) {
     console.error("Login Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Add a business to favorites
+router.post("/favorites/:businessId", async (req: Request, res: Response) => {
+  try {
+    const clientId = req.body.clientId; // ideally get from JWT
+    const { businessId } = req.params;
+
+    const client = await Client.findById<IClient>(clientId);
+    if (!client) return res.status(404).json({ message: "Client not found" });
+
+    if (!client.favoriteBusinesses) client.favoriteBusinesses = [];
+
+    const businessObjectId = new mongoose.Types.ObjectId(businessId);
+
+    if (!client.favoriteBusinesses.includes(businessObjectId)) {
+      client.favoriteBusinesses.push(businessObjectId);
+      await client.save();
+    }
+
+    res.json({ message: "Business added to favorites", favoriteBusinesses: client.favoriteBusinesses });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });

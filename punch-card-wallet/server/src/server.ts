@@ -14,6 +14,14 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
+// Simple logger middleware
+app.use((req, res, next) => {
+  const now = new Date().toISOString();
+  console.log(`[${now}] ${req.method} ${req.path}`);
+  next();
+});
+
+// Routes
 app.use("/api/business", businessRoutes);
 app.use("/api/client", clientRoutes);
 

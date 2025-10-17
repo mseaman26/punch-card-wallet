@@ -1,10 +1,11 @@
-// src/pages/ClientAuth.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { registerClient, loginClient, saveClientToken } from "../utils/ClientAuth";
 
 const ClientAuth: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
@@ -26,8 +27,8 @@ const ClientAuth: React.FC = () => {
       }
 
       saveClientToken(response.token);
-      // Redirect to client dashboard
-      navigate("/client");
+      login("client"); // sets userType in context
+      navigate("/client"); // redirect to client dashboard
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     }
@@ -75,7 +76,7 @@ const ClientAuth: React.FC = () => {
 
           <button
             type="submit"
-            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+            className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors"
           >
             {isRegister ? "Register" : "Login"}
           </button>
@@ -85,7 +86,7 @@ const ClientAuth: React.FC = () => {
           {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
           <button
             onClick={() => setIsRegister(!isRegister)}
-            className="text-blue-600 font-bold underline"
+            className="text-green-600 font-bold underline"
           >
             {isRegister ? "Login" : "Register"}
           </button>

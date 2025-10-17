@@ -1,8 +1,12 @@
+// src/App.tsx
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Business from "./pages/Business";
-import Client from "./pages/Client";
+import BusinessDashboard from "./pages/BusinessDashboard";
+import ClientDashboard from "./pages/ClientDashboard";
+import Wallet from "./pages/Wallet";
+import Profile from "./pages/Profile";
+import Rewards from "./pages/Rewards";
 import NavBar from "./components/NavBar";
 import { useAuth } from "./context/AuthContext";
 import BusinessAuth from "./pages/BusinessAuth";
@@ -14,20 +18,21 @@ const App: React.FC = () => {
 
   return (
     <div>
-      {/* Navbar only shows if user has logged in */}
+      {/* Navbar only shows if user is logged in */}
       {userType && <NavBar />}
 
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/business-auth" element={<BusinessAuth />} />
         <Route path="/client-auth" element={<ClientAuth />} />
 
-        {/* Protected Routes */}
+        {/* Protected Dashboards */}
         <Route
           path="/business"
           element={
             <PrivateRoute allowedUserType="business">
-              <Business />
+              <BusinessDashboard />
             </PrivateRoute>
           }
         />
@@ -35,7 +40,33 @@ const App: React.FC = () => {
           path="/client"
           element={
             <PrivateRoute allowedUserType="client">
-              <Client />
+              <ClientDashboard />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Protected Pages accessible by any logged-in user */}
+        <Route
+          path="/wallet"
+          element={
+            <PrivateRoute allowedUserType={userType!}>
+              <Wallet />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute allowedUserType={userType!}>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/rewards"
+          element={
+            <PrivateRoute allowedUserType={userType!}>
+              <Rewards />
             </PrivateRoute>
           }
         />

@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
 
 const Wallet: React.FC = () => {
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <h1 className="text-4xl font-bold text-blue-600">Wallet</h1>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+      <h1 className="text-4xl font-bold mb-4">Wallet 💰</h1>
+      <p className="text-gray-700">View your balance, transactions, and top up your account here.</p>
     </div>
-  )
-}
+  );
+};
 
-export default Wallet
+export default Wallet;

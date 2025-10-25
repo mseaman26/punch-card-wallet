@@ -13,7 +13,7 @@ const router = Router();
 
 router.post("/register", registerClient);
 router.post("/login", loginClient);
-router.get("/", getClients); // optional for dev/admin
+router.get("/", verifyToken,getClients); // optional for dev/admin
 router.put("/profile", verifyToken, updateClientProfile);
 router.post("/favorites/:businessId", verifyToken, addFavoriteBusiness);
 router.get("/favorites", verifyToken, getFavoriteBusinesses);

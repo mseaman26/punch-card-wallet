@@ -122,3 +122,27 @@ export const getFavoriteBusinesses = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error fetching favorites", error });
   }
 };
+
+// Remove a business from favorites
+export const removeFavoriteBusiness = async (req: Request, res: Response) => {
+  try {
+    const clientId = req.clientId;
+    const { businessId } = req.params;
+
+    if (!clientId) return res.status(401).json({ message: "Unauthorized" });
+
+    const client = await Client.findById(clientId);
+    if (!client) return res.status(404).json({ message: "Client not found" });
+
+    client.favoriteBusinesses = client.favoriteBusinesses.filter(
+      (id) => !id.equals(businessId)
+    );
+
+    await client.save();
+
+    res.json({ message: "Business removed from favorites", favoriteBusinesses: client.favoriteBusinesses });
+  } catch (error) {
+    res.status(500).json({ message: "Error removing favorite", error });
+  }
+};
+

@@ -7,6 +7,7 @@ import {
   updateClientProfile,
   addFavoriteBusiness,
   getFavoriteBusinesses,
+  removeFavoriteBusiness,
 } from "../controllers/client-controller.js";
 
 const router = Router();
@@ -17,5 +18,7 @@ router.get("/", verifyToken,getClients); // optional for dev/admin
 router.put("/profile", verifyToken, updateClientProfile);
 router.post("/favorites/:businessId", verifyToken, addFavoriteBusiness);
 router.get("/favorites", verifyToken, getFavoriteBusinesses);
+router.delete("/favorites/:businessId", verifyToken, removeFavoriteBusiness);
+
 
 export default router;

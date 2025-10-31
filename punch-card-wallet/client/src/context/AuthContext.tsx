@@ -10,6 +10,7 @@ interface AuthContextType {
   login: (type: UserType) => void;
   logout: () => void;
   favorites: string[];
+  setFavorites: React.Dispatch<React.SetStateAction<string[]>>; // <- updated
   addFavorite: (businessId: string) => void;
   removeFavorite: (businessId: string) => void;
 }
@@ -35,7 +36,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   return (
     <AuthContext.Provider
-      value={{ userType, setUserType, login, logout, favorites, addFavorite, removeFavorite }}
+      value={{ userType, setUserType, login, logout, favorites, setFavorites, addFavorite, removeFavorite }}
     >
       {children}
     </AuthContext.Provider>

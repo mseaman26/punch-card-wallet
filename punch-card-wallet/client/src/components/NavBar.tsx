@@ -21,6 +21,7 @@ const NavBar: React.FC = () => {
 
       {userType === "client" && (
         <>
+          <Link to="/businesses">Businesses</Link>
           <Link to="/wallet">Wallet</Link>
           <Link to="/rewards">Rewards</Link>
           <Link to="/profile">Profile</Link>

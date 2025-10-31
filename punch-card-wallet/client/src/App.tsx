@@ -12,6 +12,7 @@ import { useAuth } from "./context/AuthContext";
 import BusinessAuth from "./pages/BusinessAuth";
 import ClientAuth from "./pages/ClientAuth";
 import PrivateRoute from "./components/PrivateRoute";
+import Businesses from "./pages/Businesses";
 
 const App: React.FC = () => {
   const { userType } = useAuth();
@@ -26,6 +27,16 @@ const App: React.FC = () => {
         <Route path="/" element={<Home />} />
         <Route path="/business-auth" element={<BusinessAuth />} />
         <Route path="/client-auth" element={<ClientAuth />} />
+
+        <Route
+          path="/businesses"
+          element={
+            <PrivateRoute allowedUserType="client">
+               <Businesses />
+            </PrivateRoute>
+          }
+        />
+
 
         {/* Protected Dashboards */}
         <Route

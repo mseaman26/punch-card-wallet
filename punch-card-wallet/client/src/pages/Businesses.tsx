@@ -1,89 +1,106 @@
 // src/pages/Businesses.tsx
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useAuth } from "../context/AuthContext";
+import React, { useState } from "react";
 
 interface Business {
-  _id: string;
+  id: string;
   name: string;
-  email: string;
-  description?: string;
-  location?: string;
+  category: string;
+  location: string;
+  description: string;
 }
 
+const sampleBusinesses: Business[] = [
+  {
+    id: "1",
+    name: "Example Coffee Co.",
+    category: "Cafe",
+    location: "Detroit, MI",
+    description: "Locally roasted coffee and fresh pastries in the heart of downtown Detroit.",
+  },
+  {
+    id: "2",
+    name: "Example Detroit Wellness Center",
+    category: "Health & Wellness",
+    location: "Royal Oak, MI",
+    description: "Offering holistic health services, yoga, and meditation workshops.",
+  },
+  {
+    id: "3",
+    name: "Example Belt Fitness",
+    category: "Gym",
+    location: "Ferndale, MI",
+    description: "Strength and conditioning programs focused on community and results.",
+  },
+  {
+    id: "4",
+    name: "Example Flower Shop",
+    category: "Florist",
+    location: "Detroit, MI",
+    description: "Artisan floral arrangements inspired by the beauty of Belle Isle.",
+  },
+  {
+    id: "5",
+    name: "Example Tattoo Studio",
+    category: "Tattoo Studio",
+    location: "Midtown Detroit, MI",
+    description: "Custom tattoos with bold designs and a clean, creative space.",
+  },
+  {
+    id: "6",
+    name: "Example Spa & Sauna",
+    category: "Spa",
+    location: "Birmingham, MI",
+    description: "Luxury spa offering massages, saunas, and wellness treatments.",
+  },
+];
+
 const Businesses: React.FC = () => {
-  const [businesses, setBusinesses] = useState<Business[]>([]);
-  const { favorites, addFavorite, removeFavorite } = useAuth();
+  const [search, setSearch] = useState("");
 
-  // Fetch all businesses from backend
-  const fetchBusinesses = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3001/api/business", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setBusinesses(res.data);
-    } catch (err) {
-      console.error("Error fetching businesses:", err);
-    }
-  };
-
-  // Handle add/remove favorite with backend update
-  const toggleFavorite = async (businessId: string) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (favorites.includes(businessId)) {
-        // Remove favorite (optional: backend endpoint if needed)
-        removeFavorite(businessId);
-      } else {
-        // Add favorite via API
-        await axios.post(
-          `http://localhost:3001/api/client/favorites/${businessId}`,
-          {},
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        addFavorite(businessId);
-      }
-    } catch (err) {
-      console.error("Error toggling favorite:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchBusinesses();
-  }, []);
+  const filtered = sampleBusinesses.filter(
+    (b) =>
+      b.name.toLowerCase().includes(search.toLowerCase()) ||
+      b.category.toLowerCase().includes(search.toLowerCase()) ||
+      b.location.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Browse Businesses</h2>
-      {businesses.length === 0 ? (
-        <p>No businesses found.</p>
-      ) : (
-        <ul>
-          {businesses.map((b) => (
-            <li
-              key={b._id}
-              className="border p-2 mb-2 rounded flex justify-between items-center"
+    <div className="min-h-screen bg-gray-50 p-6">
+      <h1 className="text-3xl font-bold mb-6 text-center">Browse Detroit Businesses</h1>
+
+      <div className="max-w-xl mx-auto mb-8">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by name, category, or location"
+          className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filtered.length > 0 ? (
+          filtered.map((business) => (
+            <div
+              key={business.id}
+              className="bg-white shadow-md rounded-xl p-5 hover:shadow-lg transition"
             >
-              <div>
-                <p className="font-semibold">{b.name}</p>
-                <p className="text-sm">{b.email}</p>
-                {b.description && <p className="text-sm">{b.description}</p>}
-              </div>
-              <button
-                onClick={() => toggleFavorite(b._id)}
-                className={`${
-                  favorites.includes(b._id)
-                    ? "bg-red-500 hover:bg-red-600"
-                    : "bg-blue-500 hover:bg-blue-600"
-                } text-white font-bold py-1 px-3 rounded`}
-              >
-                {favorites.includes(b._id) ? "Remove" : "Add"}
+              <h2 className="text-xl font-semibold mb-2">{business.name}</h2>
+              <p className="text-gray-600">
+                {business.category} • {business.location}
+              </p>
+              <p className="text-gray-500 mt-2">{business.description}</p>
+              <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                View Details
               </button>
-            </li>
-          ))}
-        </ul>
-      )}
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 col-span-full">
+            No businesses found.
+          </p>
+        )}
+      </div>
     </div>
   );
 };

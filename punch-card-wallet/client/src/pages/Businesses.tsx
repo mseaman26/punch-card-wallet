@@ -1,5 +1,7 @@
 // src/pages/Businesses.tsx
 import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 interface Business {
   id: string;
@@ -56,6 +58,21 @@ const sampleBusinesses: Business[] = [
 
 const Businesses: React.FC = () => {
   const [search, setSearch] = useState("");
+  const { favorites, addFavorite } = useAuth();
+
+  const handleAddFavorite = async (businessId: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `http://localhost:3001/api/client/favorites/${businessId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      addFavorite(businessId);
+    } catch (err) {
+      console.error("Error adding favorite:", err);
+    }
+  };
 
   const filtered = sampleBusinesses.filter(
     (b) =>
@@ -80,25 +97,28 @@ const Businesses: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered.length > 0 ? (
-          filtered.map((business) => (
-            <div
-              key={business.id}
-              className="bg-white shadow-md rounded-xl p-5 hover:shadow-lg transition"
-            >
-              <h2 className="text-xl font-semibold mb-2">{business.name}</h2>
-              <p className="text-gray-600">
-                {business.category} • {business.location}
-              </p>
-              <p className="text-gray-500 mt-2">{business.description}</p>
-              <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                View Details
-              </button>
+          filtered.map((b) => (
+            <div key={b.id} className="bg-white shadow-md rounded-xl p-5 hover:shadow-lg transition">
+              <h2 className="text-xl font-semibold mb-2">{b.name}</h2>
+              <p className="text-gray-600">{b.category} • {b.location}</p>
+              <p className="text-gray-500 mt-2">{b.description}</p>
+              <div className="flex gap-2 mt-4">
+                <button className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition">View Details</button>
+                {favorites.includes(b.id) ? (
+                  <button disabled className="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed">Favorited</button>
+                ) : (
+                  <button
+                    onClick={() => handleAddFavorite(b.id)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                  >
+                    Add to Favorites
+                  </button>
+                )}
+              </div>
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500 col-span-full">
-            No businesses found.
-          </p>
+          <p className="text-center text-gray-500 col-span-full">No businesses found.</p>
         )}
       </div>
     </div>

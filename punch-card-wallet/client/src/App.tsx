@@ -6,7 +6,6 @@ import BusinessDashboard from "./pages/BusinessDashboard";
 import ClientDashboard from "./pages/ClientDashboard";
 import Wallet from "./pages/Wallet";
 import Profile from "./pages/Profile";
-import Rewards from "./pages/Rewards";
 import NavBar from "./components/NavBar";
 import { useAuth } from "./context/AuthContext";
 import BusinessAuth from "./pages/BusinessAuth";
@@ -70,14 +69,6 @@ const App: React.FC = () => {
           element={
             <PrivateRoute allowedUserType={userType!}>
               <Profile />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/rewards"
-          element={
-            <PrivateRoute allowedUserType={userType!}>
-              <Rewards />
             </PrivateRoute>
           }
         />

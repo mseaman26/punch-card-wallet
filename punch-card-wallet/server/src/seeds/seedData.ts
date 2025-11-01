@@ -1,37 +1,19 @@
+// src/seeds/seedData.ts
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
+import Client from "../models/Client.js";
+import Business from "../models/Business.js";
 
-// ----------------------
-// 1. Define Schemas
-// ----------------------
-const clientSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  phone: String,
-  password: String, // for login
-});
+const MONGO_URI = "mongodb://127.0.0.1:27017/punchcard";
 
-const businessSchema = new mongoose.Schema({
-  name: String,
-  category: String,
-  location: String,
-  description: String,
-  email: String,
-  phone: String,
-  password: String, // optional if businesses log in
-});
-
-// ----------------------
-// 2. Define Models
-// ----------------------
-const Client = mongoose.model("Client", clientSchema);
-const Business = mongoose.model("Business", businessSchema);
-
-// ----------------------
-// 3. Sample Data
-// ----------------------
+// Sample data
 const clients = [
-  { name: "Test Client", email: "client@test.com", phone: "555-0000", password: "client123" },
+  {
+    name: "Test Client",
+    email: "client@test.com",
+    phone: "555-0000",
+    password: "client123",
+  },
 ];
 
 const businesses = [
@@ -91,17 +73,15 @@ const businesses = [
   },
 ];
 
-// ----------------------
-// 4. Connect & Seed DB
-// ----------------------
 async function seedDatabase() {
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/punchcard");
-    console.log("MongoDB connected!");
+    await mongoose.connect(MONGO_URI);
+    console.log("✅ MongoDB connected successfully");
 
-    // Clear existing data
+    // Clear existing collections
     await Client.deleteMany({});
     await Business.deleteMany({});
+    console.log("🧹 Cleared existing collections");
 
     // Hash passwords
     const hashedClients = await Promise.all(
@@ -112,14 +92,16 @@ async function seedDatabase() {
       businesses.map(async (b) => ({ ...b, password: await bcrypt.hash(b.password, 10) }))
     );
 
-    // Insert sample data
+    // Insert data
     await Client.insertMany(hashedClients);
     await Business.insertMany(hashedBusinesses);
 
-    console.log("Database seeded successfully!");
-    mongoose.connection.close();
+    console.log("🌱 Database seeded successfully!");
   } catch (err) {
-    console.error("Error seeding database:", err);
+    console.error("❌ Error seeding database:", err);
+  } finally {
+    await mongoose.connection.close();
+    console.log("🔒 Connection closed");
   }
 }
 

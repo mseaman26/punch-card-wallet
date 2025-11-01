@@ -33,19 +33,33 @@ export const registerClient = async (req: Request, res: Response) => {
 
 // Login a client
 export const loginClient = async (req: Request, res: Response) => {
+  console.log("Incoming login request:", req.body); // 👈 Add this
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      console.log("Missing email or password");
+      return res.status(400).json({ message: "Missing email or password" });
+    }
+
     const client = await Client.findOne({ email });
-    if (!client) return res.status(400).json({ message: "Invalid credentials" });
+    if (!client) {
+      console.log("Invalid email:", email);
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
     const validPassword = await bcrypt.compare(password, client.password);
-    if (!validPassword) return res.status(400).json({ message: "Invalid credentials" });
+    if (!validPassword) {
+      console.log("Password mismatch for:", email);
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
     const token = jwt.sign({ id: client._id }, JWT_SECRET, { expiresIn: "1h" });
+    console.log("Login success for:", email);
 
     res.json({ message: "Login successful", token, client });
   } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ message: "Error logging in client", error });
   }
 };

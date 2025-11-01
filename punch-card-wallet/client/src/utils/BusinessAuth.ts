@@ -1,4 +1,5 @@
 // src/utils/BusinessAuth.ts
+import { saveToken, getToken as getStoredToken, removeToken } from "./token";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api";
 
@@ -36,6 +37,6 @@ export const loginBusiness = async (email: string, password: string): Promise<Au
 };
 
 // Token utilities
-export const saveBusinessToken = (token: string) => localStorage.setItem("businessToken", token);
-export const getBusinessToken = () => localStorage.getItem("businessToken");
-export const logoutBusiness = () => localStorage.removeItem("businessToken");
+export const saveBusinessToken = (token: string) => saveToken(token);
+export const getBusinessToken = () => getStoredToken();
+export const logoutBusiness = () => removeToken();

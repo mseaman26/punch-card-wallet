@@ -1,3 +1,4 @@
+// middleware/auth.ts
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
@@ -16,25 +17,17 @@ declare module "express-serve-static-core" {
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader)
-    return res.status(401).json({ message: "No token provided" });
+  if (!authHeader) return res.status(401).json({ message: "No token provided" });
 
-  const token = authHeader.split(" ")[1]; // Expecting "Bearer <token>"
+  const token = authHeader.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "No token found" });
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
-    // Use baseUrl or path to detect which type
-    if (req.baseUrl.includes("/client")) {
-      req.clientId = decoded.id;
-    } else if (req.baseUrl.includes("/business")) {
-      req.businessId = decoded.id;
-    }
-
-    // Ensure we attached something
-    if (!req.clientId && !req.businessId) {
-      return res.status(403).json({ message: "Unauthorized user type" });
-    }
+    // Attach clientId or businessId based on mounted route
+    if (req.baseUrl.includes("/client")) req.clientId = decoded.id;
+    if (req.baseUrl.includes("/business")) req.businessId = decoded.id;
 
     next();
   } catch (err) {

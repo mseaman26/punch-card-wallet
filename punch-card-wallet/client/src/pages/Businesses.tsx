@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import { getToken } from "../utils/token";
+
 
 interface Business {
   id: string;
@@ -62,12 +64,14 @@ const Businesses: React.FC = () => {
 
   const handleAddFavorite = async (businessId: string) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.post(
+        const token = getToken();
+        console.log("Token being sent:", token);
+
+        await axios.post(
         `http://localhost:3001/api/client/favorites/${businessId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
-      );
+        );
       addFavorite(businessId);
     } catch (err) {
       console.error("Error adding favorite:", err);

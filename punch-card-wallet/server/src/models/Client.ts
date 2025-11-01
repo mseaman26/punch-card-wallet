@@ -7,6 +7,7 @@ export interface IClient extends Document {
   password: string;
   description?: string;
   location?: string;
+  avatar?: string; // ✅ NEW FIELD
     favoriteBusinesses: Types.ObjectId[];
 }
 
@@ -16,6 +17,7 @@ const ClientSchema: Schema<IClient> = new Schema({
   password: { type: String, required: true },
     description: { type: String },
     location: { type: String },
+      avatar: { type: String, default: "https://via.placeholder.com/150" }, // ✅ Default avatar
     favoriteBusinesses: [{ type: Schema.Types.ObjectId, ref: "Business", default: [] }],
 });
 

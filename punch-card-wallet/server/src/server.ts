@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
 import businessRoutes from "./routes/businessRoutes.js";
 import clientRoutes from "./routes/clientRoutes.js";
 import "./config/connection.js";
@@ -21,13 +22,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
+// API Routes
 app.use("/api/business", businessRoutes);
 app.use("/api/client", clientRoutes);
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("Backend is running!");
+// Serve frontend static files
+const clientDistPath = path.join(__dirname, "../../client/dist");
+app.use(express.static(clientDistPath));
+
+// Catch-all route to serve React's index.html
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(clientDistPath, "index.html"));
 });
 
 // Start server

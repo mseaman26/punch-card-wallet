@@ -27,7 +27,7 @@ app.use("/api/business", businessRoutes);
 app.use("/api/client", clientRoutes);
 
 // Serve frontend static files
-const clientDistPath = path.join(process.cwd(), "client/dist");
+const clientDistPath = path.join(process.cwd(), "../client/dist");
 app.use(express.static(clientDistPath));
 
 // Catch-all route to serve React SPA for any unmatched route
